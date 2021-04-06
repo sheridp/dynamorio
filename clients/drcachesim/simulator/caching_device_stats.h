@@ -53,7 +53,8 @@ class caching_device_stats_t {
 public:
     explicit caching_device_stats_t(const std::string &miss_file,
                                     bool warmup_enabled = false,
-                                    bool is_coherent = false);
+                                    bool is_coherent = false,
+                                    bool dump_evictions = false);
     virtual ~caching_device_stats_t();
 
     // Called on each access.
@@ -80,6 +81,9 @@ public:
     // Process invalidations due to cache inclusions or external writes.
     virtual void
     invalidate(invalidation_type_t invalidation_type);
+
+    virtual void
+    dump_eviction(addr_t eviction_destination);
 
 protected:
     bool success_;
@@ -117,6 +121,10 @@ protected:
 
     // We provide a feature of dumping misses to a file.
     bool dump_misses_;
+
+    // We provide a feature of dumping evictions to a file.
+    bool dump_evictions_;
+
 #ifdef HAS_ZLIB
     gzFile file_;
 #else

@@ -67,6 +67,8 @@ public:
     // A 32-bit counter should be sufficient but we may want to revisit.
     // We already have stdint.h so we can reinstate int_least64_t easily.
     int counter_; // for use by replacement policies
+
+    bool dirty_{false};
 };
 
 #endif /* _CACHING_DEVICE_BLOCK_H_ */

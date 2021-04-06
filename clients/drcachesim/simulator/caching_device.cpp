@@ -214,11 +214,24 @@ caching_device_t::request(const memref_t &memref_in)
                         }
                     }
                 }
+                if(parent_ == NULL && cache_block->dirty_){
+                    stats_->dump_eviction(victim_tag << block_size_bits_);
+                    cache_block->dirty_ = false;
+                }
             }
             cache_block->tag_ = tag;
         }
 
         access_update(block_idx, way);
+        
+        // Whether a hit or miss, if the operation was a write, we need to mark
+        // block dirty
+        if(memref.data.type == TRACE_TYPE_WRITE){
+            caching_device_block_t &cache_block =
+                get_caching_device_block(block_idx, way);
+
+            cache_block.dirty_ = true;
+        }
 
         // Issue a hardware prefetch, if any, before we remember the last tag,
         // so we remember this line and not the prefetched line.

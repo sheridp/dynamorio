@@ -105,7 +105,8 @@ cache_simulator_t::cache_simulator_t(const cache_simulator_knobs_t &knobs)
     bool warmup_enabled_ = ((knobs_.warmup_refs > 0) || (knobs_.warmup_fraction > 0.0));
 
     if (!llc->init(knobs_.LL_assoc, (int)knobs_.line_size, (int)knobs_.LL_size, NULL,
-                   new cache_stats_t(knobs_.LL_miss_file, warmup_enabled_))) {
+                   new cache_stats_t(knobs_.LL_miss_file, warmup_enabled_, false /*is_coherent*/,
+                                     knobs_.LL_dump_evictions))) {
         error_string_ =
             "Usage error: failed to initialize LL cache.  Ensure sizes and "
             "associativity are powers of 2, that the total size is a multiple "

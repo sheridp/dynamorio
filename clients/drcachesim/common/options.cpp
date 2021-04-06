@@ -159,6 +159,11 @@ droption_t<std::string> op_LL_miss_file(
     "analysis be written to the specified file. Each hint is written in text format as a "
     "<program counter, stride, locality level> tuple.");
 
+droption_t<bool> op_LL_dump_evictions(
+    DROPTION_SCOPE_FRONTEND, "LL_dump_evictions", false,
+    "Whether to dump LLC evictions",
+    "When used in conjuction with LL_miss_file, controls wehther LLC evictions are recorded");
+
 droption_t<bool> op_L0_filter(
     DROPTION_SCOPE_CLIENT, "L0_filter", false,
     "Filter out zero-level hits during tracing",

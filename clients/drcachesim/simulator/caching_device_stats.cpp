@@ -36,7 +36,8 @@
 #include "caching_device_stats.h"
 
 caching_device_stats_t::caching_device_stats_t(const std::string &miss_file,
-                                               bool warmup_enabled, bool is_coherent)
+                                               bool warmup_enabled, bool is_coherent,
+                                               bool dump_evictions)
     : success_(true)
     , num_hits_(0)
     , num_misses_(0)
@@ -52,6 +53,7 @@ caching_device_stats_t::caching_device_stats_t(const std::string &miss_file,
 {
     if (miss_file.empty()) {
         dump_misses_ = false;
+        dump_evictions_ = false;
     } else {
 #ifdef HAS_ZLIB
         file_ = gzopen(miss_file.c_str(), "w");
@@ -60,9 +62,12 @@ caching_device_stats_t::caching_device_stats_t(const std::string &miss_file,
 #endif
         if (file_ == nullptr) {
             dump_misses_ = false;
+            dump_evictions_ = false;
             success_ = false;
-        } else
+        } else {
             dump_misses_ = true;
+            dump_evictions_ = dump_evictions;
+        }
     }
 }
 
@@ -114,10 +119,23 @@ caching_device_stats_t::dump_miss(const memref_t &memref)
         pc = memref.data.pc;
     }
     addr = memref.data.addr;
+    trace_type_t type = memref.data.type;
 #ifdef HAS_ZLIB
-    gzprintf(file_, "0x%zx,0x%zx\n", pc, addr);
+    gzprintf(file_, "0x%zx,0x%zx,%d\n", pc, addr, type);
 #else
-    fprintf(file_, "0x%zx,0x%zx\n", pc, addr);
+    fprintf(file_, "0x%zx,0x%zx,%d\n", pc, addr, type);
+#endif
+}
+
+void caching_device_stats_t::dump_eviction(addr_t eviction_destination){
+    if(!dump_evictions_) return;
+
+    trace_type_t type = TRACE_TYPE_WRITE;
+    addr_t pc = 0; //unused, but added to maintain compatibility with dump_miss
+#ifdef HAS_ZLIB
+    gzprintf(file_, "0x%zx,0x%zx,%d\n", pc, eviction_destination, type);
+#else
+    fprintf(file_, "0x%zx,0x%zx,%d\n", pc, eviction_destination, type);
 #endif
 }
 
