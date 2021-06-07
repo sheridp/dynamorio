@@ -130,7 +130,7 @@ caching_device_stats_t::dump_miss(const memref_t &memref)
 void caching_device_stats_t::dump_eviction(addr_t eviction_destination){
     if(!dump_evictions_) return;
 
-    trace_type_t type = TRACE_TYPE_WRITE;
+    trace_type_t type = TRACE_TYPE_WRITEBACK;
     addr_t pc = 0; //unused, but added to maintain compatibility with dump_miss
 #ifdef HAS_ZLIB
     gzprintf(file_, "0x%zx,0x%zx,%d\n", pc, eviction_destination, type);

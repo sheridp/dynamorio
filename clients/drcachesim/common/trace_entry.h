@@ -192,6 +192,8 @@ typedef enum {
     TRACE_TYPE_PREFETCH_WRITE_L3,    /**< Store prefetch to L3 cache. */
     TRACE_TYPE_PREFETCH_WRITE_L3_NT, /**< Non-temporal store prefetch to L3 cache. */
 
+    TRACE_TYPE_WRITEBACK
+
     // Update trace_type_names[] when adding here.
 } trace_type_t;
 
